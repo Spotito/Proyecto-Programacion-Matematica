@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 from algebra_lineal import matriz_traspuesta as traspuesta, print_matriz_con_fraccciones as print_m
-
+from munkres import *
 def restar_filas(matriz):
     "Retorna una matriz en la que el minimo de cada una de sus filas se le resta a cada fila"
     matriz_restada = copy.deepcopy(matriz)
@@ -165,6 +165,18 @@ def hungaro(matriz: list):
         matriz0 = restar_minimo_matriz(matriz0)
         print_m(matriz0); print()
 
+def hungaro_munkres(matriz_costo):
+    m = Munkres()
+
+    asignaciones = m.compute(matriz_costo)
+    
+    asignacionesOptimas = []
+    total = 0
+    for row, column in asignaciones:
+        valor = matriz_costo[row][column]
+        asignacionesOptimas.append((row, column))
+        total += valor      
+    return asignacionesOptimas, total
 
 matriz=[[11800, 15000, 20000, 0],
         [12500, 13000, 14400, 0],
@@ -172,3 +184,6 @@ matriz=[[11800, 15000, 20000, 0],
         [18000, 17000, 16000, 0]]
 
 hungaro(matriz)
+asig, total = hungaro_munkres(matriz)
+print(asig)
+print(total)
