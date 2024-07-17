@@ -165,6 +165,8 @@ def hungaro(matriz: list):
         matriz0 = restar_minimo_matriz(matriz0)
         print_m(matriz0); print()
 
+
+
 def hungaro_munkres(matriz_costo):
     m = Munkres()
 
@@ -178,13 +180,23 @@ def hungaro_munkres(matriz_costo):
         total += valor      
     return asignacionesOptimas, total
 
-matriz=[[11800, 15000, 20000, 0],
-        [12500, 13000, 14400, 0],
-        [20000, 18000, 23000, 0],
-        [18000, 17000, 16000, 0]]
+filas = int(input(" Introduzca el numero de filas: \n> "))
+col = int(input(" Introduzca el numero de columnas: \n> "))
+
+matriz = []
+
+for i in range(filas):
+    array = []
+
+    for j in range(col):
+        array.append(int(input(f'Diga el valor de ({i},{j}): \n> ')))
+
+    matriz.append(array)
+
+print(matriz, '\n')
 
 hungaro(matriz)
 asig, total = hungaro_munkres(matriz)
 print(asig)
 print(total)
-print("Ricardo es Pete")
+
