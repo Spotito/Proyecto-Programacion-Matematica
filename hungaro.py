@@ -43,27 +43,29 @@ def columna_con_mas_ceros(matriz: list):
             indice = j
     return indice
 
-def eliminar_fila(matriz: list, i: int):
-    "Retorna la matriz resultante de eliminar la fila dada"
+def marcar_fila(matriz: list, i: int):
+    "Retorna la matriz resultante de marcar la fila con el indice dado. Cada elemento de la fila lo coloca entre <>"
     matriz0 = copy.deepcopy(matriz)
-    matriz0.pop(i)
+    for j in range(len(matriz0[i])):
+        matriz0[i][j] = f"<{matriz0[i][j]}>"
     return matriz0
 
-def eliminar_columna(matriz: list, j: int):
-    "Retorna la matriz resultante de eliminar la columna dada"
+def marcar_columna(matriz: list, j: int):
+    "Retorna la matriz resultante de marcar la columna con el indice dado. Cada elemento de la columna lo coloca entre <>"
     matriz0 = copy.deepcopy(matriz)
-    for i in range(len(matriz0)):
-        matriz0[i].pop(j)
+    for fila in matriz0:
+        fila[j] = f"<{fila[j]}>"
     return matriz0
 
-def eliminar_linea(matriz: list):
-    "Retorna la matriz resultante de eliminar la linea con mas ceros"
+def marcar_linea(matriz: list):
+    "Retorna la matriz resultante de marcar la linea con mas ceros. Cada elemento de la linea lo coloca entre <>"
+    "Si una fila tiene la misma cantidad de ceros que una columna, se prioriza el marcado de la fila"
     i = fila_con_mas_ceros(matriz)
     j = columna_con_mas_ceros(matriz)
     if traspuesta(matriz)[j].count(0) > matriz[i].count(0):
-        return eliminar_columna(matriz, j)
+        return marcar_columna(matriz, j)
     else:
-        return eliminar_fila(matriz, i)
+        return marcar_fila(matriz, i)
 
 def ceros_de_cada_linea(matriz: list):
     """Retorna una tupla de dos diccionarios
@@ -106,29 +108,62 @@ def hay_cero(matriz: list):
                 return True
     return False
 
-def eliminar_lineas(matriz: list):
-    "Retorna la matriz resultante de eliminar las lineas con ceros, usando la menor cantidad de eliminaciones"
+def marcar_lineas(matriz: list):
+    "Retorna la matriz resultante de marcar las lineas que tienen al menos un 0, usando la menor cantidad de marcas posibles"
+    "Se marca cada elemento de la linea colocandolo entre <>"
     matriz0 = copy.deepcopy(matriz)
     while hay_cero(matriz0):
-        matriz0 = eliminar_linea(matriz0)
+        matriz0 = marcar_linea(matriz0)
     return matriz0
+
+def cantidad_marcas(matriz: list):
+    "Retorna la cantidad de lineas que se tuvieron que marcar para cubrir todos los ceros"
+    matriz0 = copy.deepcopy(matriz)
+    cantidad = 0
+    while hay_cero(matriz0):
+        matriz0 = marcar_linea(matriz0)
+        cantidad += 1
+    return cantidad
+
+def min0(lista: list):
+    "Retorna el elemento mas pequeño de la lista dada"
+    valor_minimo = 999999999
+    for elemento in lista:
+        if type(elemento) == int and elemento < valor_minimo:
+            valor_minimo = elemento
+    return valor_minimo
 
 def minimo(matriz: list):
     "Retorna el elemento mas pequeño de la matriz dada"
-    valor_minimo = matriz[0][0]
+    valor_minimo = 999999999
     for fila in matriz:
-        if min(fila) < valor_minimo:
-            valor_minimo = min(fila)
+        if type(min0(fila)) == int and min0(fila) < valor_minimo:
+            valor_minimo = min0(fila)
     return valor_minimo
 
 def restar_minimo_matriz(matriz: list):
-    "Retorna la matriz resultante de restarle su valor minimo"
+    "Retorna la matriz resultante de restarle su valor minimo. Las lineas marcadas se ignoran"
     matriz0 = copy.deepcopy(matriz)
     m = minimo(matriz)
     for fila in matriz0:
         for j in range(len(fila)):
-            fila[j] -= m
+            if type(fila[j]) == int:
+                fila[j] -= m
     return matriz0
+
+def hungaro(matriz: list):
+    matriz0 = copy.deepcopy(matriz)
+    print_m(matriz0); print()
+    matriz0 = restar_filas(matriz0)
+    print_m(matriz0); print()
+    matriz0 = restar_columnas(matriz0)
+    print_m(matriz0); print()
+    cant_marcas = cantidad_marcas(matriz0)
+    matriz0 = marcar_lineas(matriz0)
+    print_m(matriz0); print()
+    if cant_marcas < len(matriz0): # El algoritmo continua
+        matriz0 = restar_minimo_matriz(matriz0)
+        print_m(matriz0); print()
 
 
 matriz=[[11800, 15000, 20000, 0],
@@ -136,22 +171,4 @@ matriz=[[11800, 15000, 20000, 0],
         [20000, 18000, 23000, 0],
         [18000, 17000, 16000, 0]]
 
-print_m(matriz)
-print(ceros_de_cada_linea(matriz))
-print(lineas_con_mas_ceros(matriz)); print()
-matriz = restar_filas(matriz)
-print_m(matriz)
-print(ceros_de_cada_linea(matriz))
-print(lineas_con_mas_ceros(matriz)); print()
-matriz = restar_columnas(matriz)
-print_m(matriz)
-print(ceros_de_cada_linea(matriz))
-print(lineas_con_mas_ceros(matriz)); print()
-matriz = eliminar_lineas(matriz)
-print_m(matriz)
-print(ceros_de_cada_linea(matriz))
-print(lineas_con_mas_ceros(matriz)); print()
-matriz = restar_minimo_matriz(matriz)
-print_m(matriz)
-print(ceros_de_cada_linea(matriz))
-print(lineas_con_mas_ceros(matriz)); print()
+hungaro(matriz)
