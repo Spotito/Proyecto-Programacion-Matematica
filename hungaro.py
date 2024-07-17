@@ -151,19 +151,36 @@ def restar_minimo_matriz(matriz: list):
                 fila[j] -= m
     return matriz0
 
-def hungaro(matriz: list):
+def maximo_matriz(matriz: list):
     matriz0 = copy.deepcopy(matriz)
     print_m(matriz0); print()
-    matriz0 = restar_filas(matriz0)
-    print_m(matriz0); print()
-    matriz0 = restar_columnas(matriz0)
-    print_m(matriz0); print()
-    cant_marcas = cantidad_marcas(matriz0)
-    matriz0 = marcar_lineas(matriz0)
-    print_m(matriz0); print()
-    if cant_marcas < len(matriz0): # El algoritmo continua
-        matriz0 = restar_minimo_matriz(matriz0)
-        print_m(matriz0); print()
+    maximo = matriz0[0][0]
+    for fila in matriz0:
+        if max(fila) > maximo:
+            maximo = max(fila)
+    return maximo
+
+def maximizar_a_minimizar(matriz: list):
+    matriz0 = copy.deepcopy(matriz)
+    maximo = maximo_matriz(matriz0)
+    for fila in matriz0:
+        for j in range(len(fila)):
+            fila[j] = maximo - fila[j]
+    return matriz0
+
+# def hungaro(matriz: list, maximizar = False):
+#     matriz0 = copy.deepcopy(matriz)
+#     print_m(matriz0); print()        
+#     matriz0 = restar_filas(matriz0)
+#     print_m(matriz0); print()
+#     matriz0 = restar_columnas(matriz0)
+#     print_m(matriz0); print()
+#     cant_marcas = cantidad_marcas(matriz0)
+#     matriz0 = marcar_lineas(matriz0)
+#     print_m(matriz0); print()
+#     if cant_marcas < len(matriz0): # El algoritmo continua
+#         matriz0 = restar_minimo_matriz(matriz0)
+#         print_m(matriz0); print()
 
 
 
@@ -193,10 +210,19 @@ for i in range(filas):
 
     matriz.append(array)
 
-print(matriz, '\n')
+# matriz = [[13, 7, 12, 12], [10, 13, 15, 7], [10, 13, 15, 7], [13, 10, 8, 8]]
 
-hungaro(matriz)
+while True:
+    metodo = input("\nSe quiere maximizar o minimizar (min/max)? \n> ")
+
+    if metodo == "max":
+        matriz = maximizar_a_minimizar(matriz)
+        print('PASO ANTES DE MAXIMIZAR: \n', matriz, '\n\nMAXIMIZANDO:\n')
+        break
+    elif metodo == "min":
+        print('MINIMIZANDO: \n')
+        break
+
 asig, total = hungaro_munkres(matriz)
-print(asig)
-print(total)
-
+print('ASIGNACIONES OPTIMAS: ', asig)
+print('COSTO TOTAL: ', total)
